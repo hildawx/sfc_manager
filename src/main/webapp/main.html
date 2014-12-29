@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta charset="utf-8">
+    <title>SFC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta content="" name="description">
+    <meta content="" name="author">
+    <link href="assets/plugins/pace/pace-theme-flash.css" rel="stylesheet" type="text/css">
+    <link href="assets/plugins/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="assets/plugins/bootstrap3-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css">
+    <link href="pages/css/pages-icons.css" rel="stylesheet" type="text/css">
+    <link class="main-stylesheet" href="pages/css/pages.css" rel="stylesheet" type="text/css">
+    <style>
+        .email-wrapper .email-sidebar { display: block!important;}
+        .email-wrapper .email-opened { overflow: hidden;}
+        .page-container .page-content-wrapper .content {padding-top:0}
+    </style>
+
+</head>
+
+<body class="fixed-header">
+
+    <div class="page-container">
+        
+        <div class="page-content-wrapper full-height">
+
+            <div class="content full-height">
+
+                <div class="email-wrapper">
+
+                    <nav class="email-sidebar padding-30">
+                        <p> <h4 class="text-white"><i class="fa fa-2 fa-building"></i> SFC后台管理</h4>                   
+                        <span class="bg-complete text-white p-t-10 p-l-20 p-r-20 p-b-10 block text-center"><i class="fa fa-user"></i> <span id="current_user"> admin</span></span>
+                        <hr class="">
+                        <ul class="main-menu">
+                            <li class="active">
+                                <a href="deviceInfo.html" target="mainPage">
+                                    <span class="title"><i class="pg-folder"></i> 设备基本信息</span>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="userConfig.html" target="mainPage">
+                                    <span class="title"><i class="pg-servers"></i> 用户配置</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div class="email-opened">
+                        <iframe id="mainPage" name="mainPage" src="deviceInfo.html" width="100%" height="" scrolling="auto" frameborder="0"></iframe>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script>
+    <script src="assets/plugins/jquery/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="assets/plugins/modernizr.custom.js" type="text/javascript"></script>
+    <script src="assets/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="assets/plugins/boostrapv3/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="assets/plugins/bootstrap3-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <!--<script src="pages/js/pages.email.js" type="text/javascript"></script>-->
+    <script type="text/javascript" src="pages/js/common.js"></script>
+
+    <script>
+
+      /* 取窗口可视范围的高度 */
+      function getClientHeight() {
+          var clientHeight = 0;
+          if (document.body.clientHeight && document.documentElement.clientHeight) {
+              var clientHeight = (document.body.clientHeight < document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
+          } else {
+              var clientHeight = (document.body.clientHeight > document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
+          }
+          return clientHeight;
+      }
+
+      // 重新定义iframe的高度
+      function refreshHeight() {
+          var h = getClientHeight();
+          $("#mainPage").attr("height", h + "px");
+      }
+
+      $(window).resize(function() {
+          refreshHeight();
+      });
+
+      refreshHeight();
+
+      $(function(){
+          var lis = $(".main-menu").find("li");
+          lis.on("click",function(){
+              lis.removeClass("active");
+              $(this).addClass("active");
+          });
+      });
+    </script>
+
+</body>
+
+</html>
