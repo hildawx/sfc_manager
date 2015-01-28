@@ -4,6 +4,7 @@
  */
 package com.ambimmort.sfcmanager.servlet;
 
+import com.ambimmort.sfcmanager.service.ClassifierService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -11,13 +12,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONObject;
 
 /**
  *
  * @author Administrator
  */
 @WebServlet(name = "NewServlet", urlPatterns = {"/NewServlet"})
-public class NewServlet extends HttpServlet {
+public class ClassifierInfoServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP
@@ -33,17 +35,12 @@ public class NewServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        
+        String ip = request.getParameter("ip");
+        String port = request.getParameter("port");
         try {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet NewServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet NewServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            JSONObject info = new ClassifierService().getClassifierInfo(ip, port);
+            out.print(info);
         } finally {            
             out.close();
         }
