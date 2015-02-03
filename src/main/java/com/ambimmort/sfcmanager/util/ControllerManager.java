@@ -4,13 +4,12 @@
  */
 package com.ambimmort.sfcmanager.util;
 
-import java.io.BufferedReader;
-import java.io.File;
+import com.ambimmort.sfcmanager.entity.Device;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +17,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 
 /**
  *
@@ -26,29 +32,37 @@ import net.sf.json.JSONObject;
 public class ControllerManager {
     private static ControllerManager manager;
     private static final String CONTROLLER_FILE = "/controller.txt";
-    private List<JSONObject> controller;
+    private List<Device> controller;
     
     private ControllerManager() {
-        this.controller = new ArrayList<JSONObject>();
+        this.controller = new ArrayList<Device>();
     }
     
     public JSONArray getControllers() {
         return JSONArray.fromObject(controller);
     }
     
-    public void addController(String ip, String port) throws IOException {
-        JSONObject o = new JSONObject();
-        o.put("ip", ip);
-        o.put("port", port);
+    public void addController(String name, String ip, String port, String type) throws IOException {
+        Device o = new Device();
+        o.setName(name);
+        o.setIp(ip);
+        o.setPort(port);
+        o.setType(type);
         controller.add(o);
         saveController();
     }
     
-    public void removeController(String ip, String port) throws IOException {
-        Iterator<JSONObject> it = controller.iterator();
+    public void removeController(String name, String ip, String port, String type) throws IOException {
+        Device d = new Device();
+        d.setName(name);
+        d.setIp(ip);
+        d.setPort(port);
+        d.setType(type);
+        
+        Iterator<Device> it = controller.iterator();
         while (it.hasNext()) {
-            JSONObject o = it.next();
-            if (ip.equals(o.getString("ip"))) {
+            Device o = it.next();
+            if (o.equals(d)) {
                 it.remove();
                 break;
             }
@@ -56,31 +70,56 @@ public class ControllerManager {
         saveController();
     }
     
-    private void loadController() throws IOException {
+    private void loadController() throws FileNotFoundException {
         String f = Config.getInstance().get("local_path") + CONTROLLER_FILE;
-        BufferedReader br = new BufferedReader(new FileReader(f));
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            String[] tmp = line.split("\\|");
-            JSONObject o = new JSONObject();
-            o.put("ip", tmp[0]);
-            o.put("port", tmp[1]);
-            controller.add(o);
+        InputStream is = new FileInputStream(f);
+        SAXReader saxReader = new SAXReader();
+        try {
+            Document doc = saxReader.read(is);
+            Element root = doc.getRootElement();
+
+            Iterator<Element> it = root.elementIterator("device");
+            while (it.hasNext()) {
+                Element ele = it.next();
+                Device d = new Device();
+                d.setName(ele.elementText("name"));
+                d.setIp(ele.elementText("ip"));
+                d.setPort(ele.elementText("port"));
+                d.setType(ele.elementText("type"));
+                controller.add(d);
+            }
+        } catch (DocumentException ex) {
+            Logger.getLogger(ControllerManager.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ControllerManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        br.close();
     }
     
     private void saveController() throws IOException {
         String f = Config.getInstance().get("local_path") + CONTROLLER_FILE;
-        PrintWriter pw = new PrintWriter(new FileWriter(f));
-        Iterator<JSONObject> it = controller.iterator();
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        XMLWriter writer = new XMLWriter(new FileWriter(f), format);
+        
+        Document doc = DocumentHelper.createDocument();
+        Element root = DocumentHelper.createElement("devices");
+        doc.setRootElement(root);
+        
+        Iterator<Device> it = controller.iterator();
         while (it.hasNext()) {
-            JSONObject o = it.next();
-            pw.print(o.get("ip"));
-            pw.print('|');
-            pw.println(o.get("port"));
+            Device o = it.next();
+            Element device = DocumentHelper.createElement("device");
+            device.addElement("name").setText(o.getName());
+            device.addElement("ip").setText(o.getIp());
+            device.addElement("port").setText(o.getPort());
+            device.addElement("type").setText(o.getType());
+            root.add(device);
         }
-        pw.close();
+        writer.write(doc);
+        writer.close();
     }
     
     public static ControllerManager getInstance() {
