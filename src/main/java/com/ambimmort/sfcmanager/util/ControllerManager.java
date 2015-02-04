@@ -42,9 +42,20 @@ public class ControllerManager {
         return JSONArray.fromObject(controller);
     }
     
-    public void addController(String name, String ip, String port, String type) throws IOException {
+    public JSONArray getControllersByType(String type) {
+        List rs = new ArrayList();
+        Iterator<Device> it = controller.iterator();
+        while (it.hasNext()) {
+            Device dev = it.next();
+            if (type.equals(dev.getType())) {
+                rs.add(dev);
+            }
+        }
+        return JSONArray.fromObject(rs);
+    }
+    
+    public void addController(String ip, String port, String type) throws IOException {
         Device o = new Device();
-        o.setName(name);
         o.setIp(ip);
         o.setPort(port);
         o.setType(type);
@@ -52,9 +63,8 @@ public class ControllerManager {
         saveController();
     }
     
-    public void removeController(String name, String ip, String port, String type) throws IOException {
+    public void removeController(String ip, String port, String type) throws IOException {
         Device d = new Device();
-        d.setName(name);
         d.setIp(ip);
         d.setPort(port);
         d.setType(type);
@@ -82,7 +92,6 @@ public class ControllerManager {
             while (it.hasNext()) {
                 Element ele = it.next();
                 Device d = new Device();
-                d.setName(ele.elementText("name"));
                 d.setIp(ele.elementText("ip"));
                 d.setPort(ele.elementText("port"));
                 d.setType(ele.elementText("type"));
@@ -112,7 +121,6 @@ public class ControllerManager {
         while (it.hasNext()) {
             Device o = it.next();
             Element device = DocumentHelper.createElement("device");
-            device.addElement("name").setText(o.getName());
             device.addElement("ip").setText(o.getIp());
             device.addElement("port").setText(o.getPort());
             device.addElement("type").setText(o.getType());
