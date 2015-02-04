@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Administrator
  */
-@WebServlet(name = "DeviceAdd", urlPatterns = {"/admin/DeviceAdd"})
-public class DeviceAdd extends HttpServlet {
+@WebServlet(name = "DeviceDel", urlPatterns = {"/admin/DeviceDelete"})
+public class DeviceDel extends HttpServlet {
 
     /**
      * Processes requests for both HTTP
@@ -39,7 +39,7 @@ public class DeviceAdd extends HttpServlet {
         String port = request.getParameter("port");
         String type = request.getParameter("type");
         try {
-            boolean flag = new DeviceService().addDevice(ip, port, type);
+            boolean flag = new DeviceService().delDevice(ip, port, type);
             out.print(flag);
         } finally {            
             out.close();

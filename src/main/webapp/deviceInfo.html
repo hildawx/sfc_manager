@@ -66,6 +66,18 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="form-group form-group-default">
+                                        <label>设备类型</label>
+                                        <select id="deviceType" class="form-control">
+                                            <option value="classifier">Classifier</option>
+                                            <option value="nat">NAT网元</option>
+                                            <option value="smart6">Smart6网元</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group form-group-default">
                                         <label>IP地址</label>
                                         <input id="cIp" type="text" class="form-control" placeholder="">
                                     </div>
@@ -82,7 +94,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button id="cEnter" type="button" class="btn btn-primary btn-cons" onClick="createAccount()"> 确定</button>
+                        <button id="cEnter" type="button" class="btn btn-primary btn-cons" onClick="createDevice()"> 确定</button>
                         <button type="button" class="btn btn-cons" data-dismiss="modal"> 取消</button>
                     </div>
                 </div>
@@ -92,7 +104,7 @@
         <!-- 添加设备弹窗 End -->
         
         <!-- 查看网口弹窗 Start-->
-        <div class="modal fade stick-up" id="portsModal" tabindex="-1" role="dialog" aria-labelledby="addNewAppModal" aria-hidden="true">
+        <div class="modal fade stick-up" id="netModal" tabindex="-1" role="dialog" aria-labelledby="addNewAppModal" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header clearfix ">
@@ -100,25 +112,34 @@
                         </button>
                         <h4 class="p-b-5"> 网口信息</h4>
                     </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <strong>网口名称</strong><br>eth1<br>
-                                <strong>网口号</strong><br>0<br>
-                                <strong>Mac地址</strong><br> 0: c:29:3f:ae:d2<br>
-                            </div>
-                            <div class="col-sm-6">
-                                <strong>网口名称</strong><br>eth1<br>
-                                <strong>网口号</strong><br>0<br>
-                                <strong>Mac地址</strong><br> 0: c:29:3f:ae:d2<br>
-                            </div>
-                        </div>
+                    <div id="netList" class="modal-body">
+                        
                     </div>
                 </div>
 
             </div>
         </div>
         <!-- 查看网口弹窗 End -->
+        
+        <!-- 查看设备详情弹窗 Start-->
+        <div class="modal fade stick-up" id="deviceDetailModal" tabindex="-1" role="dialog" aria-labelledby="addNewAppModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header clearfix ">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
+                        </button>
+                        <h4 class="p-b-5"> 设备详情</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table id="deviceInfoTable" class="table table-condensed no-footer">
+                            
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- 查看设备详情弹窗 End -->
 
     </div>
 
@@ -140,26 +161,27 @@
 
     // 添加设备提交
     function createDevice(){
+        var type = $("#deviceType option:selected").val();
         var ip = $("#cIp").val();
         var port = $("#cPort").val();
         if(ip != "" && port != ""){
-//            $.ajax({
-//                url:"admin/DeviceAdd",
-//                type:"POST",
-//                data:{ip:ip,port:port},
-//                success:function(data){
-//                    if(data == "true"){
-//                        alert("创建成功！");
-//                    }else{
-//                        alert("创建失败！");
-//                    }
-//                    window.location.reload();
-//                },
-//                error:function(e){
-//                    alert(e.message);
-//                }
-//            });
-              $("#addDeviceModal").modal("hide");
+            $.ajax({
+                url:"admin/DeviceAdd",
+                type:"POST",
+                data:{type:type,ip:ip,port:port},
+                success:function(data){
+                    if(data == "true"){
+                        alert("创建成功！");
+                    }else{
+                        alert("创建失败！");
+                    }
+                    window.location.reload();
+                },
+                error:function(e){
+                    alert(e.message);
+                }
+            });
+            $("#addDeviceModal").modal("hide");
         }else{
             alert("设备IP或端口不能为空！");
         }
@@ -167,48 +189,110 @@
     }
 
     // 删除设备
-    function deleteDevice(id){
-        console.log(id);
-//        $.ajax({
-//            url:"admin/DeviceDelete",
-//            type:"POST",
-//            data:{dpid:id},
-//            success:function(data){
-//                if(data == "true"){
-//                    alert("删除成功！");
-//                }else{
-//                    alert("删除失败！");
-//                }
-//                window.location.reload();
-//            },
-//            error:function(e){
-//                alert(e.message);
-//            }
-//        });
-
+    function deleteDevice(ip, port, type){
+        //console.log(id);
+        $.ajax({
+            url:"admin/DeviceDelete",
+            type:"POST",
+            data:{ip:ip,port:port,type:type},
+            success:function(data){
+                if(data == "true"){
+                    alert("删除成功！");
+                }else{
+                    alert("删除失败！");
+                }
+                window.location.reload();
+            },
+            error:function(e){
+                alert(e.message);
+            }
+        });
+    }
+    
+    // 查看设备其他信息
+    function deviceDetail(ip,port,type){
+        $("#deviceDetailModal").modal('show');
+        $("#deviceDetailModal").data("data",{"ip":ip,"port":port,"type":type});
+        
     }
     
     // 查看网口信息
-    function portDetail(id){
-        $('#portsModal').modal('show');
-        
-        $('#portsModal').on('shown.bs.modal', function (e) {
-//            $.ajax({
-//                url:"admin/DevicePortInfo",
-//                type:"POST",
-//                data:{dpid:id},
-//                success:function(data){
-
-//                },
-//                error:function(e){
-//                    alert(e.message);
-//                }
-//            });            
-        });
-
+    function portDetail(ip,port,type){
+        $('#netModal').modal('show');
+        $("#netModal").data("data",{"ip":ip,"port":port,"type":type});
     }
 
     $(function() {
+        
+        // 查看网口信息窗口显示事件
+        $('#netModal').on('shown.bs.modal', function (e) {
+            var param = $("netModal").data("data");
+            // 获取设备网口信息
+            $.ajax({
+                url:"admin/DevicePortInfo",
+                type:"POST",
+                data:param,
+                dataType:"json",
+                success:function(data){
+                    if(data){
+                        var outLen =  Math.ceil(data.length/3);
+                        var str = '';
+                        for(var out=0;out<outLen;out++){
+                            str+='<div class="row">';
+                            for(var inner=0;inner<3;inner++){
+                                var index = inner + (out*3);
+                                str+='<div class="col-sm-4">';
+                                str+='<strong>网口名称</strong><br>'+data[index].name+'<br>';
+                                str+='<strong>网口号</strong><br>'+data[index].portNumber+'<br>';
+                                str+='<strong>Mac地址</strong><br>'+data[index].hardwareAddress+'<br>';
+                                str+='<strong>IP地址</strong><br>'+data[index].ip+'<br>';
+                                str+='</div>';
+                            }
+                            str+='</div>';
+                        }
+                        $("#netList").html("").append(str);
+                    }
+                },
+                error:function(e){
+                    alert(e.message);
+                }
+            });            
+        });
+        
+        $("#deviceDetailModal").on('shown.bs.modal',function(e){
+            var param = $("deviceDetailModal").data("data");
+            // 获取设备其它信息
+            $.ajax({
+                url:"admin/DeviceOtherInfo" ,
+                data:param,
+                type:"POST",
+                dataType:"json",
+                success:function(data){
+                    if(data){
+                        var str = '';
+                        str+='<tr>';
+                        str+='<td class="v-align-middle bold">dpid</td><td>'+data.dpid+'</td>';
+                        str+='</tr>';
+                        str+='<tr>';
+                        str+='<td class="v-align-middle bold">inetAddress</td><td>'+data.inetAddress+'</td>';
+                        str+='</tr>';
+                        str+='<tr>';
+                        str+='<td class="v-align-middle bold">厂商</td><td>'+data.manufacturerDescription+'</td>';
+                        str+='</tr>';
+                        str+='<tr>';
+                        str+='<td class="v-align-middle bold">硬件版本</td><td>'+data.hardwareDescription+'</td>';
+                        str+='</tr>';
+                        str+='<tr>';
+                        str+='<td class="v-align-middle bold">软件版本</td><td>'+data.softwareDescription+'</td>';
+                        str+='</tr>';
+                        str+='<tr>';
+                        str+='<td class="v-align-middle bold">协议</td><td>'+data.openflow+'</td>';
+                        str+='</tr>';
+                        $("#deviceInfoTable").html("").append(str);
+                    }
+                }
+            });
+        });
 
         // datatable
         $('#basicTable').dataTable({
@@ -219,26 +303,21 @@
                 "url": "pages/Chinese.json"
             },
             "bProcessing": true,
-            "sAjaxSource": "ajax/deviceInfo.txt",
+            "sAjaxSource":"admin/DeviceList",
+//            "sAjaxSource": "ajax/deviceInfo.txt",
             "aoColumns":[
-                {"sTitle":"dpid",width:"140px"},
                 {"sTitle": "IP"},
                 {"sTitle":"端口"},
-                {"sTitle": "buffer", bVisible: false},
-                {"sTitle": "连接时间",bVisible:false},
-                {"sTitle": "厂商"},
-                {"sTitle": "硬件版本"},
-                {"sTitle": "软件版本"},
-                {"sTitle": "序列号", bVisible: false},
-                {"sTitle": "数据路径", bVisible: false},
-                {"sTitle": "协议版本"},
+                {"sTitle":"设备类型"},
                 {
                     "sTitle": "操作",
                     width:"100px",
                     "targets": [3],
                     "render": function(data,type,full,meta){
-                        var id = full[0];
-                        return '<a href="javascript:;" title="查看网口信息" onclick=portDetail("'+id+'")><i class="fa fa-search"></i></a>&nbsp;&nbsp;<a href="javascript:;" title="删除" onclick=deleteDevice("'+id+'")><i class="fa fa-trash-o"></i></a>';
+                        var ip = full[0];
+                        var port = full[1];
+                        var type = full[2];
+                        return '<a href="javascript:;" title="查看设备信息" onclick=deviceDetail("'+ip+'","'+port+'","'+type+'")><i class="fa fa-dashboard"></i></a>&nbsp;&nbsp;<a href="javascript:;" title="查看网口信息" onclick=portDetail("'+ip+'","'+port+'","'+type+'")><i class="fa fa-search"></i></a>&nbsp;&nbsp;<a href="javascript:;" title="删除" onclick=deleteDevice("'+ip+'","'+port+'","'+type+'")><i class="fa fa-trash-o"></i></a>';
                     }
                 }
             ]

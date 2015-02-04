@@ -31,18 +31,18 @@ import org.dom4j.io.XMLWriter;
  */
 public class ControllerManager {
     private static ControllerManager manager;
-    private static final String CONTROLLER_FILE = "/controller.txt";
+    private static final String CONTROLLER_FILE = "/devices.xml";
     private List<Device> controller;
     
     private ControllerManager() {
         this.controller = new ArrayList<Device>();
     }
     
-    public JSONArray getControllers() {
-        return JSONArray.fromObject(controller);
+    public List<Device> getControllers() {
+        return controller;
     }
     
-    public JSONArray getControllersByType(String type) {
+    public List<Device> getControllersByType(String type) {
         List rs = new ArrayList();
         Iterator<Device> it = controller.iterator();
         while (it.hasNext()) {
@@ -51,7 +51,7 @@ public class ControllerManager {
                 rs.add(dev);
             }
         }
-        return JSONArray.fromObject(rs);
+        return rs;
     }
     
     public void addController(String ip, String port, String type) throws IOException {

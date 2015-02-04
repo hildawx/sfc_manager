@@ -123,22 +123,22 @@
         var username = $("#username").val();
         var pwd = $("#pwd").val();
         if(pid!="" && username != "" && pwd != ""){
-//            $.ajax({
-//                url:"admin/ParentCreate",
-//                type:"POST",
-//                data:{pid:pid,username:username,pwd:pwd},
-//                success:function(data){
-//                    if(data == "true"){
-//                        alert("创建成功！");
-//                    }else{
-//                        alert("创建失败！");
-//                    }
-//                    window.location.reload();
-//                },
-//                error:function(e){
-//                    alert(e.message);
-//                }
-//            });
+            $.ajax({
+                url:"admin/ParentCreate",
+                type:"POST",
+                data:{pid:pid,username:username,pwd:pwd},
+                success:function(data){
+                    if(data == "true"){
+                        alert("创建成功！");
+                    }else{
+                        alert("创建失败！");
+                    }
+                    window.location.reload();
+                },
+                error:function(e){
+                    alert(e.message);
+                }
+            });
               $("#addUserModal").modal("hide");
         }else{
             alert("家长用户名或密码不能为空！");

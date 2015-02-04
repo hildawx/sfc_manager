@@ -35,7 +35,7 @@ public class BusinessChainAdd extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = response.getWriter();
         
-        String host = request.getParameter("host");
+        String host = request.getParameter("device").replace(',', ':');
         String ip = request.getParameter("ip");
         String ipType = request.getParameter("type");
         String chain = request.getParameter("business");
