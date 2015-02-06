@@ -7,6 +7,7 @@ package com.ambimmort.sfcmanager.service;
 import com.ambimmort.sfcmanager.util.Config;
 import com.ambimmort.sfcmanager.util.RestClient;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.json.JSONArray;
@@ -49,13 +50,13 @@ public class ClassifierService {
         return false;
     }
 
-    public boolean addBusinessChain(String host, String ip, String ipType, String chain) {
+    public boolean addBusinessChain(String ip, String ipType, String chain) {
         JSONObject data = new JSONObject();
         data.put("type", ipType);
         data.put(ip, JSONArray.fromObject(chain));
         
         StringBuilder sb = new StringBuilder();
-        sb.append("http://").append(host).append("/gn/sfc/controller/classifier/user/chainconfig/json");
+        sb.append("http://").append(Config.getInstance().get("controller.host")).append("/gn/sfc/controller/classifier/user/chainconfig/json");
         try {
             String resp = RestClient.getInstance().post(sb.toString(), data.toString());
             return true;
@@ -63,6 +64,54 @@ public class ClassifierService {
             Logger.getLogger(ClassifierService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public boolean delParentAccount(String pid) {
+        JSONObject data = new JSONObject();
+        data.put("pid", pid);
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("http://").append(Config.getInstance().get("classifier.host")).append("/gn/classifier/account/config/parent/json");
+        try {
+            String resp = RestClient.getInstance().delete(sb.toString(), data.toString());
+            if (resp != null) {
+                JSONObject rs = JSONObject.fromObject(resp);
+                if ("success".equals(rs.getString("status"))) {
+                    return true;
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClassifierService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public JSONObject getParentAccountList() {
+        JSONObject rtObj = new JSONObject();
+        JSONArray accounts = new JSONArray();
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("http://").append(Config.getInstance().get("classifier.host")).append("/gn/classifier/account/config/parent/json");
+        try {
+            String resp = RestClient.getInstance().get(sb.toString());
+            if (resp != null) {
+                JSONArray rs = JSONArray.fromObject(resp);
+                Iterator it = rs.iterator();
+                while (it.hasNext()) {
+                    JSONObject o = (JSONObject) it.next();
+                    JSONArray item = new JSONArray();
+                    item.add(o.get("pid"));
+                    item.add(o.get("username"));
+                    item.add(o.get("passwd"));
+                    accounts.add(item);
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClassifierService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        rtObj.put("aaData", accounts);
+        return rtObj;
     }
     
 }

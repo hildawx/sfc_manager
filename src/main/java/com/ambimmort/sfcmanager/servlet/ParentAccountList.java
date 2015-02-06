@@ -12,13 +12,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONObject;
 
 /**
  *
  * @author Administrator
  */
-@WebServlet(name = "BusinessChainAdd", urlPatterns = {"/admin/BusinessChainCreate"})
-public class BusinessChainAdd extends HttpServlet {
+@WebServlet(name = "ParentAccountList", urlPatterns = {"/admin/ParentList"})
+public class ParentAccountList extends HttpServlet {
 
     /**
      * Processes requests for both HTTP
@@ -34,14 +35,9 @@ public class BusinessChainAdd extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
-        String ip = request.getParameter("ip");
-        String ipType = request.getParameter("type");
-        String chain = request.getParameter("business");
         try {
-            /* TODO output your page here. You may use following sample code. */
-            boolean flag = new ClassifierService().addBusinessChain(ip, ipType, chain);
-            out.print(flag);
+            JSONObject ob = new ClassifierService().getParentAccountList();
+            out.print(ob);
         } finally {            
             out.close();
         }

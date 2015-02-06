@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Administrator
  */
-@WebServlet(name = "BusinessChainAdd", urlPatterns = {"/admin/BusinessChainCreate"})
-public class BusinessChainAdd extends HttpServlet {
+@WebServlet(name = "ParentAccountDel", urlPatterns = {"/admin/ParentDelelte"})
+public class ParentAccountDel extends HttpServlet {
 
     /**
      * Processes requests for both HTTP
@@ -35,12 +35,9 @@ public class BusinessChainAdd extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = response.getWriter();
         
-        String ip = request.getParameter("ip");
-        String ipType = request.getParameter("type");
-        String chain = request.getParameter("business");
+        String pid = request.getParameter("pid");
         try {
-            /* TODO output your page here. You may use following sample code. */
-            boolean flag = new ClassifierService().addBusinessChain(ip, ipType, chain);
+            boolean flag = new ClassifierService().delParentAccount(pid);
             out.print(flag);
         } finally {            
             out.close();

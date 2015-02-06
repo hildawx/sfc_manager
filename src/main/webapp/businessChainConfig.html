@@ -37,13 +37,13 @@
         <div class="panel panel-transparent">
             <div class="panel-heading">
                 <div class="panel-title"> 业务链列表</div>
-                <div style="display:inline-block; margin-left: 20px;">
+                <!--<div style="display:inline-block; margin-left: 20px;">
                     <label>设备：</label>
                     <select id="deviceSelect">
                         <option value="192.168.1.1,1234">192.168.1.1:1234</option>
                         <option value="192.168.1.1,1234">192.168.1.211:5678</option>
                     </select>
-                </div>
+                </div>-->
                 <div class="pull-right">
                     <div class="col-xs-12">
                         <button class="btn btn-primary btn-cons" id="show-modal" data-toggle="modal" data-target="#addChainModal"><i class="fa fa-plus"></i> 添加业务链配置</button>
@@ -142,12 +142,12 @@
         var ip = $("#IPAddress").val();
         var business = $("#business").select2('val');
         business = _.map(business, function(item){return {"element": item}});
-        var device = $("#deviceSelect option:selected").val();
+        //var device = $("#deviceSelect option:selected").val();
         if(ip != "" && business != ""){
             $.ajax({
                 url:"admin/BusinessChainCreate",
                 type:"POST",
-                data:{type:type,ip:ip,business:JSON.stringify(business),device:device},
+                data:{type:type,ip:ip,business:JSON.stringify(business)},
                 success:function(data){
                     if(data == "true"){
                         alert("创建成功！");
@@ -168,7 +168,7 @@
     }
     
     // 生成业务链列表
-    function ChainTalbe(device){
+    function ChainTalbe(){
         if(oTable){
             oTable.fnDestroy();
         }
@@ -181,8 +181,8 @@
                 "url": "pages/Chinese.json"
             },
             "bProcessing": true,
-            "sAjaxSource": "ajax/chain.txt?device="+device,
-//            "sAjaxSource": "admin/BusinessChainList",
+//            "sAjaxSource": "ajax/chain.txt",
+            "sAjaxSource": "admin/BusinessChainList",
             "aoColumns":[
                 {"sTitle": "IP地址类型",width:"140px"},
                 {"sTitle":"IP地址",width:"340px"},
@@ -195,32 +195,7 @@
 //        $('.custom-tag-input').tagsinput({});
         $("#business").select2();
         
-        // 加载设备select
-        $.ajax({
-            url:"admin/DeviceList",
-            type:"GET",
-            dataType:"json",
-            success:function(data){
-                if(data){
-                    var option = '';
-                    $.each(data.aaData,function(i,e){
-                        option = '<option value="'+e[0]+','+e[1]+'">'+e[0]+':'+e[1]+'</option>';
-                    });
-                    $("#deviceSelect").html("").append(option);
-                }else{
-                    $("#deviceSelect").append('<option value="">获取数据失败..</option>');
-                }
-            }
-        });
-        
-        ChainTalbe($("#deviceSelect option:selected").val());
-
-        // 设备选择
-        $("#deviceSelect").change(function(){
-            var device = $("#deviceSelect option:selected").val();
-            ChainTalbe(device);
-        });
-        
+        ChainTalbe();
     });
     </script>
 </body>

@@ -5,6 +5,7 @@
 package com.ambimmort.sfcmanager.util;
 
 import com.ambimmort.sfcmanager.entity.Device;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -15,8 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -36,6 +35,10 @@ public class ControllerManager {
     
     private ControllerManager() {
         this.controller = new ArrayList<Device>();
+        File f = new File(Config.getInstance().get("local_path"));
+        if (!f.exists()) {
+            f.mkdirs();
+        }
     }
     
     public List<Device> getControllers() {
