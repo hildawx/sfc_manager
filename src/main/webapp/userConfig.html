@@ -63,14 +63,14 @@
                     <div class="modal-body">
                         <!-- <p class="small-text">Create a new app using this form, make sure you fill them all</p> -->
                         <form role="form">
-                            <div class="row">
+<!--                            <div class="row">
                                 <div class="col-sm-12">
                                     <div class="form-group form-group-default">
                                         <label>PID</label>
                                         <input id="pid" type="text" class="form-control" placeholder="">
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="form-group form-group-default">
@@ -119,14 +119,14 @@
 
     // 添加设备提交
     function createAccount(){
-        var pid = $("#pid").val();
+//        var pid = $("#pid").val();
         var username = $("#username").val();
         var pwd = $("#pwd").val();
         if(pid!="" && username != "" && pwd != ""){
             $.ajax({
                 url:"admin/ParentCreate",
                 type:"POST",
-                data:{pid:pid,username:username,pwd:pwd},
+                data:{username:username,pwd:pwd},
                 success:function(data){
                     if(data == "true"){
                         alert("创建成功！");
